@@ -144,7 +144,7 @@ def sort_key(t, usage, priority):
     try:
         return (0, priority.index(t["id"]))
     except ValueError:
-        return (1, t["title"].lower())
+        return (1, t["title"].lower(), t["id"])
 
 
 def tile_html(t):

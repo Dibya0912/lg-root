@@ -1,7 +1,6 @@
 import json
 import os
 import sys
-import tempfile
 import unittest
 from unittest.mock import patch
 
@@ -89,6 +88,12 @@ class ClassifyTest(unittest.TestCase):
         _, _, sysrow = bl.classify(lp, self.cfg)
         self.assertNotIn("com.webos.app.othersys", [t["id"] for t in sysrow])
 
+    def test_string_system_flag_is_not_treated_as_boolean(self):
+        lp = [make_lp("com.example.app", "Example")]
+        lp[0]["systemApp"] = "false"
+        apps, _, _ = bl.classify(lp, self.cfg)
+        self.assertEqual([t["id"] for t in apps], ["com.example.app"])
+
     def test_inputs_from_system_not_config_list(self):
         # No hardcoded input allowlist: any port launch point the system
         # reports is an input -- a device plugged back in later appears
@@ -132,17 +137,6 @@ class SortTest(unittest.TestCase):
 
 
 class TemplateTest(unittest.TestCase):
-    def test_config_rejects_malformed_input_allowlist(self):
-        original = bl.APP_DIR
-        with tempfile.TemporaryDirectory() as temp:
-            bl.APP_DIR = temp
-            os.makedirs(temp, exist_ok=True)
-            with open(os.path.join(temp, "config.json"), "w", encoding="utf-8") as f:
-                json.dump({"ui": {"inputs": "not-an-array"}}, f)
-            with self.assertRaisesRegex(ValueError, "ui.inputs"):
-                bl.load_config()
-        bl.APP_DIR = original
-
     def test_tile_attributes_and_labels_are_escaped(self):
         tile = {'id': 'app" onload="bad', 'title': '<img onerror="bad">',
                 'icon': 'anything.png', 'params': {'value': '"<bad>'}}

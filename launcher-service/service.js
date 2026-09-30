@@ -131,7 +131,7 @@ register('getTiles', function (payload, reply) {
             var input = M.input(lp);
             if (
                 !input &&
-                (lp.systemApp || lp.id === C.SETTINGS_ID) &&
+                (lp.systemApp === true || lp.id === C.SETTINGS_ID) &&
                 allowed.indexOf(lp.id) < 0
             )
                 return;

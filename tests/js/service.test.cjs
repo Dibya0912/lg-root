@@ -47,6 +47,14 @@ test('empty or corrupt system allowlists never expose system apps', () => {
     }
 });
 
+test('string system flags do not hide normal applications', () => {
+    const s = service();
+    const tileReply = s.request('getTiles');
+    s.respond({ returnValue: true, launchPoints: [{ id: 'example.app', systemApp: 'false' }] });
+    assert.equal(tileReply[0].returnValue, true);
+    assert.equal(tileReply[0].tiles[0].id, 'example.app');
+});
+
 test('missing, invalid, failed, thrown and timed-out Luna replies respond exactly once', async () => {
     for (const response of [null, {}, { returnValue: false, errorText: 'denied' }, { returnValue: true, launchPoints: {} }]) {
         const s = service(); const replies = s.request('getTiles'); const callback = s.pending[0];

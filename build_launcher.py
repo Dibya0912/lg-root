@@ -72,7 +72,7 @@ def load_config():
     for key in ("text", "brand"):
         if not isinstance(cfg["header"][key], str):
             raise ValueError("config.json header.%s must be a string" % key)
-    for key in ("system", "appsPriority"):
+    for key in ("inputs", "system", "appsPriority"):
         value = cfg["ui"][key]
         if not isinstance(value, list) or not all(isinstance(item, str) for item in value):
             raise ValueError("config.json ui.%s must be an array of strings" % key)

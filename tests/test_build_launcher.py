@@ -1,6 +1,7 @@
 import json
 import os
 import sys
+import tempfile
 import unittest
 from unittest.mock import patch
 
@@ -131,6 +132,17 @@ class SortTest(unittest.TestCase):
 
 
 class TemplateTest(unittest.TestCase):
+    def test_config_rejects_malformed_input_allowlist(self):
+        original = bl.APP_DIR
+        with tempfile.TemporaryDirectory() as temp:
+            bl.APP_DIR = temp
+            os.makedirs(temp, exist_ok=True)
+            with open(os.path.join(temp, "config.json"), "w", encoding="utf-8") as f:
+                json.dump({"ui": {"inputs": "not-an-array"}}, f)
+            with self.assertRaisesRegex(ValueError, "ui.inputs"):
+                bl.load_config()
+        bl.APP_DIR = original
+
     def test_tile_attributes_and_labels_are_escaped(self):
         tile = {'id': 'app" onload="bad', 'title': '<img onerror="bad">',
                 'icon': 'anything.png', 'params': {'value': '"<bad>'}}

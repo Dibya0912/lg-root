@@ -96,7 +96,7 @@ test('usage renumbering is deterministic for equal recency values', () => {
     const replies = s.request('launchApp', { id: 'video' });
     s.respond({ returnValue: true });
     assert.equal(replies[0].returnValue, true);
-    assert.deepEqual(Object.keys(JSON.parse(s.disk.files.get(C.USAGE_FILE))), ['alpha', 'zebra', 'video']);
+    assert.deepEqual(JSON.parse(s.disk.files.get(C.USAGE_FILE)), { zebra: 2, alpha: 1, video: 3 });
 });
 
 test('preference updates preserve unrelated values, sanitize lists, and report failed writes', () => {

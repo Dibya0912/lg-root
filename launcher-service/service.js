@@ -85,7 +85,7 @@ function loadConfig() {
 function recordLaunch(id) {
     var usage = M.usage(store.readJson(C.USAGE_FILE));
     var keys = Object.keys(usage).sort(function (a, b) {
-        return usage[a] - usage[b];
+        return usage[a] - usage[b] || (a < b ? -1 : a > b ? 1 : 0);
     });
     // Renumbering preserves recency and avoids precision loss in long-lived stores.
     var next = 0;
@@ -94,7 +94,7 @@ function recordLaunch(id) {
     });
     usage[id] = ++next;
     keys = Object.keys(usage).sort(function (a, b) {
-        return usage[b] - usage[a];
+        return usage[b] - usage[a] || (a < b ? -1 : a > b ? 1 : 0);
     });
     keys.slice(60).forEach(function (key) {
         delete usage[key];

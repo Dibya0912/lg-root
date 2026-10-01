@@ -90,6 +90,15 @@ test('successful launch persists bounded recency and survives optional usage-sto
     const third = s.request('launchApp', { id: '__proto__' }); s.respond({ returnValue: true }); assert.equal(third[0].returnValue, true);
 });
 
+test('usage renumbering is deterministic for equal recency values', () => {
+    const s = service();
+    s.disk.files.set(C.USAGE_FILE, JSON.stringify({ zebra: 1, alpha: 1 }));
+    const replies = s.request('launchApp', { id: 'video' });
+    s.respond({ returnValue: true });
+    assert.equal(replies[0].returnValue, true);
+    assert.deepEqual(Object.keys(JSON.parse(s.disk.files.get(C.USAGE_FILE))), ['alpha', 'zebra', 'video']);
+});
+
 test('preference updates preserve unrelated values, sanitize lists, and report failed writes', () => {
     const s = service(); s.disk.files.set(C.PREFS_FILE, JSON.stringify({ accent: 'amber', labels: false }));
     const result = s.request('setPrefs', { pinned: ['a', 'a'], labels: 'true', dateFormat: 'HH:mm:ss' })[0];

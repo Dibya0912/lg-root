@@ -111,7 +111,7 @@ def classify(tiles, cfg):
                 or i == SELF or lp.get("hidden") or i in seen):
             continue
         seen.add(i)
-        is_sys = bool(lp.get("systemApp"))
+        is_sys = lp.get("systemApp") is True
         if is_input_id(i) or lp.get("lptype") == "bookmark":
             inputs.append(tile_dict(lp))
             continue

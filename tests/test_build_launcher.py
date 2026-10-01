@@ -88,6 +88,12 @@ class ClassifyTest(unittest.TestCase):
         _, _, sysrow = bl.classify(lp, self.cfg)
         self.assertNotIn("com.webos.app.othersys", [t["id"] for t in sysrow])
 
+    def test_string_system_flag_is_not_truthy(self):
+        lp = [make_lp("com.example.app", "Example")]
+        lp[0]["systemApp"] = "false"
+        apps, _, _ = bl.classify(lp, self.cfg)
+        self.assertEqual([t["id"] for t in apps], ["com.example.app"])
+
     def test_inputs_from_system_not_config_list(self):
         # No hardcoded input allowlist: any port launch point the system
         # reports is an input -- a device plugged back in later appears
